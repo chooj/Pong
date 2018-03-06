@@ -3,24 +3,38 @@
 package application;
 	
 import javafx.stage.Stage;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 
 public class Game {
 	
-	private static int width = 800, height = 600;
-	private static int rad = 8;
-	private static int userScore = 0, cpuScore = 0;
-	private static Ball ball = new Ball(width/2, height/2, 8, (Math.random()-0.5)*8, rad);
-	private static User user = new User(null, 0, height/2 - rad*8, rad);
-	private static CPU cpu = new CPU(null, width - rad, height/2 - rad*8, rad);
+	private static int width, height, rad, userScore, cpuScore;
+	private static Ball ball;
+	private static User user;
+	private static CPU cpu;
+    private static Pause pObj;
+    private static Rectangle shade;
 	
 	public Game() {
+		width = 800;
+		height = 600;
+		rad = 8;
+		userScore = 0;
+		cpuScore = 0;
+		ball = new Ball(width/2, height/2, 8, (Math.random()-0.5)*8, rad);
+		user = new User(null, 0, height/2 - rad*8, rad);
+		cpu = new CPU(null, width - rad, height/2 - rad*8, rad);
+		pObj = new Pause();
+		shade = new Rectangle(0, 0, width, height);
+		shade.setFill(Color.WHITE);
+		shade.setOpacity(0);
 	}
 	
 	public void run(Stage primaryStage) {
@@ -33,10 +47,11 @@ public class Game {
 		// physical components
         user.setPane(pane);
         cpu.setPane(pane);
-		pane.getChildren().addAll(ball.draw(this, pane, user, cpu), cpu.draw(ball), user.draw(scene, pane));
+		pane.getChildren().addAll(ball.draw(this, pane, user, cpu, pObj), cpu.draw(ball, pObj), user.draw(scene, pane, pObj));
 		
 		// stuff
-		pane.getChildren().addAll(centerLine(), firstTo11());
+		pane.getChildren().addAll(centerLine(), firstTo11(), shade);
+		pauseGame(scene, pane);
 		
 		// scores
 		ScoreText userText = new ScoreText(width/4 - 95, 405, String.valueOf(userScore));
@@ -46,20 +61,11 @@ public class Game {
 	}
 	
 	public void reset() {
-		//pause(750);
 		user.setY(height/2 - rad*8);
 		cpu.setY(height/2 - rad*8);
 		ball.setLoc(width/2, height/2);
 		ball.setSpeed(8, (Math.random()-0.5)*8);
-		// fix what happens after
-	}
-	
-	public void pause(int duration) {
-		try {
-			Thread.sleep(duration);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		pObj.setStop();
 	}
 	
 	public int getUserScore() {
@@ -90,4 +96,28 @@ public class Game {
 		text.setFont(new Font(30));
 		return text;
 	}
+	
+	public void pauseGame(Scene scene, Pane pane) {
+		scene.setOnMousePressed(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent t) {
+				if (!pObj.paused()) {
+					pause(pane);
+				} else if (pObj.getPauseGame()) {
+					unpause(pane);
+				}
+			}
+		});
+	}
+	
+	public void pause(Pane pane) {
+		pObj.setPauseGame(true);
+		shade.setOpacity(0.5);
+	}
+	
+	public void unpause(Pane pane) {
+		pObj.setPauseGame(false);
+		shade.setOpacity(0);
+	}
+	
 }

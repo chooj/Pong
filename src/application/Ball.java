@@ -67,15 +67,17 @@ public class Ball {
 		return cpuScore;
 	}
 	
-	public Circle draw(Game game, Pane pane, Paddle user, Paddle cpu) {
+	public Circle draw(Game game, Pane pane, Paddle user, Paddle cpu, Pause pObj) {
 		
 		Bounds bounds = pane.getBoundsInParent();
  		EventHandler<ActionEvent> eh = new EventHandler<ActionEvent>() {
  			@Override
 	        public void handle(ActionEvent t) {
-		        	//move the ball
-			    ball.setLayoutX(ball.getLayoutX() + xs);
-			    ball.setLayoutY(ball.getLayoutY() + ys);
+		        //move the ball
+ 				if (!pObj.paused()) {
+ 					ball.setLayoutX(ball.getLayoutX() + xs);
+ 					ball.setLayoutY(ball.getLayoutY() + ys);
+ 				}
 	            // bounciness
 	            if ((inXRange(bounds, "cpu") && inYRange(cpu)) ||
 	            		(inXRange(bounds, "user") && inYRange(user))) {

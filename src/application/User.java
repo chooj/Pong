@@ -24,16 +24,18 @@ public class User extends Paddle {
 		}
 	}
 	
-	public Rectangle draw(Scene scene, Pane pane) {
+	public Rectangle draw(Scene scene, Pane pane, Pause pObj) {
 		scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent t) {
-				switch(t.getCode()) {
-					case UP: moveUp();
-						break;
-					case DOWN: moveDown(pane);
-						break;
-					default: break;
+				if (!pObj.paused()) {
+					switch(t.getCode()) {
+						case UP: moveUp();
+							break;
+						case DOWN: moveDown(pane);
+							break;
+						default: break;
+					}
 				}
 			}
 		});
