@@ -1,5 +1,3 @@
-// FIND ALTERNATIVE TO Thread.sleep()
-
 package application;
 	
 import javafx.stage.Stage;
@@ -47,10 +45,10 @@ public class Game {
 		// physical components
         user.setPane(pane);
         cpu.setPane(pane);
-		pane.getChildren().addAll(ball.draw(this, pane, user, cpu, pObj), cpu.draw(ball, pObj), user.draw(scene, pane, pObj));
+		pane.getChildren().addAll(ball.draw(this, pane, user, cpu, pObj), cpu.draw(ball, pObj), user.draw(scene, pObj));
 		
 		// stuff
-		pane.getChildren().addAll(centerLine(), firstTo11(), shade);
+		pane.getChildren().addAll(centerLine(), shade);
 		pauseGame(scene, pane);
 		
 		// scores
@@ -61,6 +59,7 @@ public class Game {
 	}
 	
 	public void reset() {
+		user.setStill();
 		user.setY(height/2 - rad*8);
 		cpu.setY(height/2 - rad*8);
 		ball.setLoc(width/2, height/2);
@@ -88,13 +87,6 @@ public class Game {
 		Line centerLine = new Line(width/2, 0, width/2, height);
 		centerLine.setStroke(Color.WHITE);
 		return centerLine;
-	}
-	
-	public Text firstTo11() {
-		Text text = new Text(width/2 - 60, 70, "First to 11");
-		text.setFill(Color.WHITE);
-		text.setFont(new Font(30));
-		return text;
 	}
 	
 	public void pauseGame(Scene scene, Pane pane) {
